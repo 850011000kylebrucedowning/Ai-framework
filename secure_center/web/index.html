@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Folder Command Center</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 40px;
+        }
+
+        .card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .card p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #764ba2;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .login-form {
+            max-width: 400px;
+            margin: 40px auto;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+
+        .login-form h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .status-message {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .status-message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .status-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+
+        .feature-list {
+            text-align: left;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .feature-list li {
+            margin-bottom: 8px;
+            padding-left: 20px;
+        }
+
+        .feature-list li:before {
+            content: "✓ ";
+            color: #28a745;
+            font-weight: bold;
+            margin-left: -20px;
+            margin-right: 8px;
+        }
+
+        .nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav a {
+            padding: 10px 20px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-decoration: none;
+            color: #667eea;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .nav a:hover,
+        .nav a.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .dashboard {
+            display: none;
+        }
+
+        .dashboard.active {
+            display: block;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        table th,
+        table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+
+        table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-danger {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+
+            header h1 {
+                font-size: 24px;
+            }
+
+            .login-form {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔐 Secure Folder Command Center</h1>
+            <p>Enterprise-Grade Document & Payment Management</p>
+        </header>
+
+        <div class="content" id="mainContent">
+            <!-- Login Section -->
+            <div id="loginPage" class="dashboard active">
+                <div class="login-form">
+                    <h2>Authentication</h2>
+                    
+                    <div class="form-group">
+                        <label>Username:</label>
+                        <input type="text" id="username" placeholder="Enter username">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Password:</label>
+                        <input type="password" id="password" placeholder="Enter password">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Role (Registration):</label>
+                        <select id="role">
+                            <option value="user">User</option>
+                            <option value="accountant">Accountant</option>
+                            <option value="admin">Administrator</option>
+                        </select>
+                    </div>
+
+                    <button class="btn" onclick="register()">Register</button>
+                    <button class="btn btn-secondary" onclick="login()" style="margin-left: 10px;">Login</button>
+
+                    <div id="statusMessage" class="status-message"></div>
+                </div>
+
+                <div style="grid-column: 1/-1; margin-top: 40px;">
+                    <h2 style="text-align: center; color: #667eea; margin-bottom: 20px;">Features</h2>
+                    <div class="content">
+                        <div class="card">
+                            <div class="icon">📄</div>
+                            <h3>Document Management</h3>
+                            <p>Import, export, and securely store documents with encryption and integrity verification.</p>
+                        </div>
+
+                        <div class="card">
+                            <div class="icon">📧</div>
+                            <h3>Email Integration</h3>
+                            <p>Send and receive emails with document attachments and secure message handling.</p>
+                        </div>
+
+                        <div class="card">
+                            <div class="icon">💳</div>
+                            <h3>Payment Processing</h3>
+                            <p>Process payments across multiple currencies with complete transaction tracking.</p>
+                        </div>
+
+                        <div class="card">
+                            <div class="icon">📡</div>
+                            <h3>NFC Integration</h3>
+                            <p>Read and write to NFC chips and devices for credential provisioning.</p>
+                        </div>
+
+                        <div class="card">
+                            <div class="icon">🛡️</div>
+                            <h3>Security & Compliance</h3>
+                            <p>NIST SP 800-53 audit logging, encryption, and immutable transaction trails.</p>
+                        </div>
+
+                        <div class="card">
+                            <div class="icon">📊</div>
+                            <h3>System Monitoring</h3>
+                            <p>Real-time audit logs, system status, and comprehensive reporting.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard -->
+            <div id="dashboardPage" class="dashboard" style="grid-column: 1/-1;">
+                <div class="nav">
+                    <a href="#" class="active" onclick="showSection('dashboard')">Dashboard</a>
+                    <a href="#" onclick="showSection('documents')">Documents</a>
+                    <a href="#" onclick="showSection('payments')">Payments</a>
+                    <a href="#" onclick="showSection('audit')">Audit Log</a>
+                    <a href="#" onclick="logout()" style="background: #f8d7da; color: #721c24;">Logout</a>
+                </div>
+
+                <div id="dashboardSection" class="section active">
+                    <h3>System Status</h3>
+                    <div id="systemStatus">Loading...</div>
+                </div>
+
+                <div id="documentsSection" class="section" style="display: none;">
+                    <h3>Document Management</h3>
+                    <button class="btn" onclick="showUploadForm()">Import Document</button>
+                    <div id="documentsList" style="margin-top: 20px;">Loading...</div>
+                </div>
+
+                <div id="paymentsSection" class="section" style="display: none;">
+                    <h3>Payment Transactions</h3>
+                    <div id="transactionsList">Loading...</div>
+                </div>
+
+                <div id="auditSection" class="section" style="display: none;">
+                    <h3>Compliance Audit Log</h3>
+                    <div id="auditLog">Loading...</div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2024 Secure Folder Command Center. All rights reserved. | Enterprise-grade security</p>
+        </footer>
+    </div>
+
+    <script>
+        const API_BASE = '/api';
+        let currentUser = null;
+
+        async function register() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const role = document.getElementById('role').value;
+
+            if (!username || !password) {
+                showMessage('Please fill all fields', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password, role })
+                });
+                const data = await response.json();
+                
+                if (data.status === 'registered') {
+                    showMessage(`User ${username} registered successfully!`, 'success');
+                    document.getElementById('username').value = '';
+                    document.getElementById('password').value = '';
+                } else {
+                    showMessage(data.error || 'Registration failed', 'error');
+                }
+            } catch (error) {
+                showMessage(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (!username || !password) {
+                showMessage('Please fill all fields', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await response.json();
+                
+                if (data.status === 'authenticated') {
+                    currentUser = username;
+                    showMessage(`Welcome, ${username}!`, 'success');
+                    showDashboard();
+                } else {
+                    showMessage('Invalid credentials', 'error');
+                }
+            } catch (error) {
+                showMessage(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function logout() {
+            try {
+                await fetch(`${API_BASE}/auth/logout`, { method: 'POST' });
+                currentUser = null;
+                document.getElementById('loginPage').classList.add('active');
+                document.getElementById('dashboardPage').classList.remove('active');
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+                showMessage('Logged out successfully', 'success');
+            } catch (error) {
+                showMessage(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        function showDashboard() {
+            document.getElementById('loginPage').classList.remove('active');
+            document.getElementById('dashboardPage').classList.add('active');
+            loadSystemStatus();
+        }
+
+        async function loadSystemStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/system/status`);
+                const data = await response.json();
+                
+                document.getElementById('systemStatus').innerHTML = `
+                    <div class="alert alert-info">
+                        <p><strong>Current User:</strong> ${data.current_user}</p>
+                        <p><strong>Documents:</strong> ${data.documents_count}</p>
+                        <p><strong>Transactions:</strong> ${data.transactions_count}</p>
+                        <p><strong>Audit Events:</strong> ${data.audit_events}</p>
+                        <p><strong>Status:</strong> ${data.system}</p>
+                        <p><strong>Time:</strong> ${new Date(data.timestamp).toLocaleString()}</p>
+                    </div>
+                `;
+            } catch (error) {
+                document.getElementById('systemStatus').innerHTML = `<div class="alert alert-danger">Error loading status: ${error.message}</div>`;
+            }
+        }
+
+        function showSection(section) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
+            document.querySelectorAll('.nav a').forEach(a => a.classList.remove('active'));
+
+            // Show selected section
+            const sectionEl = document.getElementById(section + 'Section');
+            if (sectionEl) {
+                sectionEl.style.display = 'block';
+            }
+
+            // Update nav
+            event.target.classList.add('active');
+
+            // Load data
+            if (section === 'dashboard') {
+                loadSystemStatus();
+            } else if (section === 'documents') {
+                loadDocuments();
+            } else if (section === 'payments') {
+                loadTransactions();
+            } else if (section === 'audit') {
+                loadAuditLog();
+            }
+        }
+
+        async function loadDocuments() {
+            try {
+                const response = await fetch(`${API_BASE}/documents/list`);
+                const data = await response.json();
+                
+                let html = '<table><tr><th>Doc ID</th><th>Filename</th><th>Type</th><th>Size</th><th>Actions</th></tr>';
+                if (data.documents && data.documents.length > 0) {
+                    data.documents.forEach(doc => {
+                        html += `<tr>
+                            <td>${doc.doc_id}</td>
+                            <td>${doc.filename}</td>
+                            <td>${doc.document_type}</td>
+                            <td>${doc.file_size} bytes</td>
+                            <td><button class="btn" style="padding: 5px 10px; font-size: 12px;" onclick="deleteDoc('${doc.doc_id}')">Delete</button></td>
+                        </tr>`;
+                    });
+                } else {
+                    html += '<tr><td colspan="5">No documents found</td></tr>';
+                }
+                html += '</table>';
+                document.getElementById('documentsList').innerHTML = html;
+            } catch (error) {
+                document.getElementById('documentsList').innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
+            }
+        }
+
+        async function loadTransactions() {
+            try {
+                const response = await fetch(`${API_BASE}/payments/transactions`);
+                const data = await response.json();
+                
+                let html = '<table><tr><th>TX ID</th><th>Amount</th><th>Currency</th><th>Status</th><th>Created</th></tr>';
+                if (data.transactions && data.transactions.length > 0) {
+                    data.transactions.forEach(tx => {
+                        html += `<tr>
+                            <td>${tx.tx_id}</td>
+                            <td>$${(tx.amount / 100).toFixed(2)}</td>
+                            <td>${tx.currency.toUpperCase()}</td>
+                            <td>${tx.status}</td>
+                            <td>${new Date(tx.created_at).toLocaleString()}</td>
+                        </tr>`;
+                    });
+                } else {
+                    html += '<tr><td colspan="5">No transactions found</td></tr>';
+                }
+                html += '</table>';
+                document.getElementById('transactionsList').innerHTML = html;
+            } catch (error) {
+                document.getElementById('transactionsList').innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
+            }
+        }
+
+        async function loadAuditLog() {
+            try {
+                const response = await fetch(`${API_BASE}/system/audit-log`);
+                const data = await response.json();
+                
+                let html = '<table><tr><th>Event Type</th><th>User</th><th>Amount</th><th>Timestamp</th><th>Details</th></tr>';
+                if (data.events && data.events.length > 0) {
+                    data.events.forEach(event => {
+                        html += `<tr>
+                            <td>${event.event_type}</td>
+                            <td>${event.masked_user}</td>
+                            <td>$${event.amount}</td>
+                            <td>${new Date(event.timestamp).toLocaleString()}</td>
+                            <td>${event.details.substring(0, 50)}...</td>
+                        </tr>`;
+                    });
+                } else {
+                    html += '<tr><td colspan="5">No audit events found</td></tr>';
+                }
+                html += '</table>';
+                document.getElementById('auditLog').innerHTML = html;
+            } catch (error) {
+                document.getElementById('auditLog').innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
+            }
+        }
+
+        function showMessage(message, type) {
+            const msgEl = document.getElementById('statusMessage');
+            msgEl.textContent = message;
+            msgEl.className = `status-message ${type}`;
+            setTimeout(() => {
+                msgEl.className = 'status-message';
+            }, 5000);
+        }
+
+        function showUploadForm() {
+            alert('Document upload functionality - redirect to upload page or modal');
+        }
+
+        function deleteDoc(docId) {
+            if (confirm('Are you sure you want to delete this document?')) {
+                alert(`Document ${docId} deletion - to be implemented`);
+            }
+        }
+
+        // Auto-load status every 30 seconds
+        setInterval(() => {
+            if (currentUser) loadSystemStatus();
+        }, 30000);
+    </script>
+</body>
+</html>
